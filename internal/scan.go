@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"github.com/yuchanns/yuchanns/pre-render/internal/chromedp"
 	"github.com/yuchanns/yuchanns/pre-render/internal/utils"
 	"io/fs"
@@ -57,7 +58,7 @@ func OverwriteFiles(ctx context.Context, pages []*chromedp.Page) error {
 				return
 			}
 			defer fd.Close()
-			if _, err := fd.WriteString(page.Content); err != nil {
+			if _, err := fd.WriteString(fmt.Sprintf("<!DOCTYPE html>%s", page.Content)); err != nil {
 				errGroup.Append(err)
 				return
 			}
