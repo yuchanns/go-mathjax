@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"github.com/spf13/cobra"
-	"github.com/yuchanns/yuchanns/pre-render/internal"
+	"github.com/yuchanns/hugo-pre-render/internal"
 	"log"
 )
 

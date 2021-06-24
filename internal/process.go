@@ -2,7 +2,7 @@ package internal
 
 import (
 	"context"
-	"github.com/yuchanns/yuchanns/pre-render/internal/chromedp"
+	"github.com/yuchanns/hugo-pre-render/internal/chromedp"
 )
 
 func Process(ctx context.Context, dirs []string, ext string) error {

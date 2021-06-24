@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/chromedp/chromedp"
-	"github.com/yuchanns/yuchanns/pre-render/internal/utils"
+	"github.com/yuchanns/hugo-pre-render/internal/utils"
 	"log"
 	"sync"
 )

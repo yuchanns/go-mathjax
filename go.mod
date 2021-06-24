@@ -1,4 +1,4 @@
-module github.com/yuchanns/yuchanns/pre-render
+module github.com/yuchanns/hugo-pre-render
 
 go 1.16
 

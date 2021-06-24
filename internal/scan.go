@@ -3,8 +3,8 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/yuchanns/yuchanns/pre-render/internal/chromedp"
-	"github.com/yuchanns/yuchanns/pre-render/internal/utils"
+	"github.com/yuchanns/hugo-pre-render/internal/chromedp"
+	"github.com/yuchanns/hugo-pre-render/internal/utils"
 	"io/fs"
 	"log"
 	"os"
