@@ -47,11 +47,17 @@ func OverwriteFiles(ctx context.Context, pages []*chromedp.Page) error {
 	errGroup := utils.NewErrGroup()
 
 	reg := regexp.MustCompile("<script(([\\s\\S])*?)</script>")
+    regImg := regexp.MustCompile("<img(([\\s\\S]))*?>")
 
 	for i := range pages {
 		go func(ctx context.Context, page *chromedp.Page) {
 			defer wg.Done()
+            // trip script tag
 			page.Content = reg.ReplaceAllString(page.Content, "")
+            // wrap img tag by div tag
+            page.Content = regImg.ReplaceAllStringFunc(page.Content, func(s string) string {
+                return fmt.Sprintf("<div class=\"img-container\">%s</div>", s)
+            })
 			fd, err := os.Create(page.Path)
 			if err != nil {
 				errGroup.Append(err)
