@@ -47,7 +47,7 @@ func OverwriteFiles(ctx context.Context, pages []*chromedp.Page) error {
 	errGroup := utils.NewErrGroup()
 
 	reg := regexp.MustCompile("<script(([\\s\\S])*?)</script>")
-    regImg := regexp.MustCompile("<img(([\\s\\S]))*?>")
+    regImg := regexp.MustCompile("<img src(([\\s\\S]))*?>")
 
 	for i := range pages {
 		go func(ctx context.Context, page *chromedp.Page) {
