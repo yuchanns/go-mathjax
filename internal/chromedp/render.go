@@ -3,10 +3,12 @@ package chromedp
 import (
 	"context"
 	"fmt"
-	"github.com/chromedp/chromedp"
-	"github.com/yuchanns/hugo-pre-render/internal/utils"
 	"log"
 	"sync"
+
+	"github.com/chromedp/chromedp"
+	"github.com/pkufergus/goroutinepool"
+	"github.com/yuchanns/hugo-pre-render/internal/utils"
 )
 
 type Page struct {
@@ -19,10 +21,13 @@ type PagesManager struct {
 	pages  []*Page
 }
 
-func NewPagesManager() *PagesManager {
+func NewPagesManager(n int) *PagesManager {
+	if n <= 0 {
+		n = 1
+	}
 	return &PagesManager{
 		locker: &sync.Mutex{},
-		pages:  make([]*Page, 0, 20),
+		pages:  make([]*Page, 0, n),
 	}
 }
 
@@ -40,21 +45,17 @@ func (p *PagesManager) GetPages() []*Page {
 // concurrency at most 10 goroutines
 func Render(ctx context.Context, files []string) ([]*Page, error) {
 	grs := len(files)
-
-	wg := &sync.WaitGroup{}
-	wg.Add(grs)
-
-	if grs > 10 {
-		grs = 10
+	pageManager := NewPagesManager(grs)
+	errGroup := utils.NewErrGroup()
+	if grs > 20 {
+		grs = 20
 	}
 
-	pageManager := NewPagesManager()
-	errGroup := utils.NewErrGroup()
+	p := goroutinepool.NewRoutinePool(grs)
 
 	for i := range files {
-		go func(ctx context.Context, file string) {
-			defer wg.Done()
-
+		file := files[i]
+		p.AddJob(func() {
 			content, err := render(ctx, fmt.Sprintf("file:///%s", file))
 			if err != nil {
 				log.Printf("render %s...\tErr: %s\n", file, err)
@@ -68,9 +69,10 @@ func Render(ctx context.Context, files []string) ([]*Page, error) {
 			pageManager.Append(page)
 			log.Printf("render %s...\tDone\n", file)
 
-		}(ctx, files[i])
+		})
 	}
-	wg.Wait()
+
+	p.WaitAll()
 
 	if errGroup.HasErr() {
 		return nil, errGroup
